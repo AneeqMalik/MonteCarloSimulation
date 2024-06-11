@@ -1,0 +1,6 @@
+project_name,team_members,number_of_tasks_per_team,project_cost,resource_usage,time_between_phases,change_requests,project_duration
+Project A,5,20,100000,20,2,5,12
+Project B,10,35,200000,100,3,10,18
+Project C,7,25,150000,50,2,7,14
+Project D,30,60,400000,50,4,1,20
+Project E,25,50,350000,50,5,2,10
