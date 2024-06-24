@@ -28,8 +28,8 @@ def simulation_View():
     mean_delay = np.mean(st.session_state.dfData.delays)
 
     # Calculate delay for specific input
-    specific_team_members = 90
-    specific_num_tasks = 100
+    specific_team_members = st.number_input('Enter number of team members', min_value=1, value=90)
+    specific_num_tasks = st.number_input('Enter number of tasks', min_value=1, value=100)
     st.session_state.dfData.specific_delay = calculate_delay(specific_num_tasks, specific_team_members)
 
     # Calculate the percentile of the specific delay

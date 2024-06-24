@@ -10,6 +10,9 @@ def evaluation_View():
     with tab1:
         st.title("Human Performance Evaluation")
         st.write("This is the Human Performance Evaluation page")
+        # Calculate delay for specific input
+        specific_team_members = st.number_input('Enter specific team members', min_value=1, value=90)
+        specific_num_tasks = st.number_input('Enter specific number of tasks', min_value=1, value=100)
 
         num_samples = 100000
         
@@ -42,9 +45,27 @@ def evaluation_View():
         # Display the plot in Streamlit
         st.pyplot(plt)
         plt.clf()
+
+        # Function to calculate possible delay in delivery
+        def calculate_delay(num_tasks, num_team_members):
+            ratio = num_tasks / num_team_members
+            if ratio > 2.5:
+                return 10
+            elif ratio > 2:
+                return 7
+            else:
+                return 0
+        
+        specific_delay = calculate_delay(specific_num_tasks, specific_team_members)
+
+        # Calculate the percentile of the specific delay
+        percentile = stats.percentileofscore(st.session_state.dfData.delays, specific_delay, kind='rank')
+
+        st.write(f"Specific delay for {specific_team_members} team members and {specific_num_tasks} tasks: {specific_delay} days")
+        st.write(f"Percentile of this delay in the simulation data: {percentile:.2f}%")
     
     with tab2:
-        st.write("Resource Usage Evaluation")
+        st.title("Resource Usage Evaluation")
         st.write("This is the Resource Usage Evaluation page")
 
         # Function to determine resource usage increase based on delay
@@ -57,6 +78,8 @@ def evaluation_View():
                 return 0  # No increase
 
         num_simulations = 100000  # Number of simulations
+
+        specific_resource_usage = st.number_input('Enter specific resource usage', min_value=1, value=75)
 
         # Simulate resource usage estimates using a triangular distribution
         resource_usage = np.random.triangular(st.session_state.dfData.min_usage, st.session_state.dfData.most_likely_usage, st.session_state.dfData.max_usage, num_simulations)
@@ -88,7 +111,6 @@ def evaluation_View():
         plt.legend()
 
         # Specific resource usage estimate
-        specific_resource_usage = 75
         resource_increase_factor = determine_resource_increase(st.session_state.dfData.specific_delay)
         specific_resource_usage *= (1 + resource_increase_factor)
 
@@ -144,7 +166,19 @@ def evaluation_View():
         st.pyplot(plt)
         plt.clf()
 
+        # Specific resource usage estimate
+        resource_increase_factor = determine_resource_increase(st.session_state.dfData.specific_delay)
+        specific_resource_usage *= (1 + resource_increase_factor)
+
+        # Calculate the percentile of the specific resource usage
+        percentile = stats.percentileofscore(resource_usage, specific_resource_usage, kind='rank')
+
+        st.write(f"Specific resource usage estimate: {specific_resource_usage} Units")
+        st.write(f"Percentile of this estimate in the simulation data: {percentile:.2f}%")
+
     with tab3:
+        st.title("Project Cost Evaluation")
+        st.write("This is the Project Cost Evaluation page")
         # Parameters
         mean_cost = 50000  # Mean project cost
         std_dev_cost = 10000  # Standard deviation of project cost
@@ -223,3 +257,13 @@ def evaluation_View():
         plt.show()
         st.pyplot(plt)
         plt.clf()
+        # Specific project cost estimate
+        specific_project_cost = 55000
+        cost_increase_factor = determine_cost_increase(st.session_state.dfData.specific_delay)
+        specific_project_cost*= (1 + cost_increase_factor)
+
+        # Calculate the percentile of the specific project cost
+        percentile = stats.percentileofscore(project_costs, specific_project_cost, kind='rank')
+
+        st.write(f"Specific project cost estimate: ${specific_project_cost}")
+        st.write(f"Percentile of this estimate in the simulation data: {percentile:.2f}%")
