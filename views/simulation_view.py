@@ -34,8 +34,10 @@ def simulation_View():
 
     # Calculate the percentile of the specific delay
     percentile = stats.percentileofscore(st.session_state.dfData.delays, st.session_state.dfData.specific_delay, kind='rank')
-
-    st.write(f"Specific delay for {specific_team_members} team members and {specific_num_tasks} tasks: {st.session_state.dfData.specific_delay} days")
+    if(st.session_state.dfData.specific_delay == 0):
+        st.write("No delay is expected for the given data.")
+    else:
+        st.write(f"Specific delay for {specific_team_members} team members and {specific_num_tasks} tasks: {st.session_state.dfData.specific_delay} days")
     st.write(f"Percentile of this delay in the simulation data: {percentile:.2f}%")
 
     # Plot the bar chart of the delays
